@@ -1,10 +1,15 @@
 const FOODITEM = require("../models/foodModel");
+const User = require("../models/userModel");
 
 // GET Request for /calc
 const getItem = async (req, res) => {
   try {
-    const foodItems = await FOODITEM.find();
-    res.status(200).json(foodItems);
+    const foodItems = await FOODITEM.find({ user: req.user.id });
+    res.status(200).json({
+      success: true,
+      message: `Here is ${req.user.name}'s list of food items`,
+      foodItems,
+    });
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: "Something went wrong", error });
@@ -21,13 +26,16 @@ const setItem = async (req, res) => {
     //throw new Error("Add a text");
   }
   const foodItem = await FOODITEM.create({
+    user: req.user.id,
     name: req.body.name,
     calories: req.body.calories,
     price: req.body.price,
   });
-  res
-    .status(200)
-    .json({ sucess: true, message: "Successfully added Item", foodItem });
+  res.status(200).json({
+    sucess: true,
+    message: `Successfully added Item to ${req.user.name}'s food list`,
+    foodItem,
+  });
 };
 
 // PUT Request for /calc/:id
@@ -37,7 +45,14 @@ const updateItem = async (req, res) => {
     res.status(400).json({ success: false, message: "foodItem not found" });
     return;
   }
-
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    res.status(401).json({ success: false, message: "User not found" });
+  }
+  //check if user that is logged in matches the food item's user
+  if (foodItem.user.toString() !== user.id) {
+    res.status(401).json({ success: false, message: "User not authorized" });
+  }
   const updatedItem = await FOODITEM.findByIdAndUpdate(
     req.params.id,
     req.body,
@@ -56,9 +71,19 @@ const updateItem = async (req, res) => {
 const deleteItem = async (req, res) => {
   const foodItem = await FOODITEM.findById(req.params.id);
   if (!foodItem) {
-    req.status(400).json({ success: false, message: "Item not found" });
+    res.status(400).json({ success: false, message: "Item not found" });
     return;
   }
+
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    res.status(401).json({ success: false, message: "User not found" });
+  }
+  //check if user that is logged in matches the food item's user
+  if (foodItem.user.toString() !== user.id) {
+    res.status(401).json({ success: false, message: "User not authorized" });
+  }
+
   await foodItem.remove();
   res.status(200).json({
     success: true,

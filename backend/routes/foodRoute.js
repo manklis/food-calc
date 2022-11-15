@@ -7,9 +7,11 @@ const {
   deleteItem,
 } = require("../controllers/foodController");
 
-router.get("/", getItem);
-router.post("/", setItem);
-router.put("/:id", updateItem);
-router.delete("/:id", deleteItem);
+const { protect } = require("../middleware/protectMiddleware");
+
+router.get("/", protect, getItem);
+router.post("/", protect, setItem);
+router.put("/:id", protect, updateItem);
+router.delete("/:id", protect, deleteItem);
 
 module.exports = router;
