@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import Dashboard from "./pages/Dashboard.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
@@ -17,6 +18,7 @@ function App() {
           </Routes>
         </div>
       </Router>
+      <ToastContainer></ToastContainer>
     </>
   );
 }
