@@ -32,7 +32,7 @@ const setItem = async (req, res) => {
     price: req.body.price,
   });
   res.status(200).json({
-    sucess: true,
+    success: true,
     message: `Successfully added Item to ${req.user.name}'s food list`,
     foodItem,
   });
@@ -53,6 +53,7 @@ const updateItem = async (req, res) => {
   if (foodItem.user.toString() !== user.id) {
     res.status(401).json({ success: false, message: "User not authorized" });
   }
+  const oldFoodItem = foodItem.name;
   const updatedItem = await FOODITEM.findByIdAndUpdate(
     req.params.id,
     req.body,
@@ -62,7 +63,7 @@ const updateItem = async (req, res) => {
   );
   res.status(200).json({
     success: true,
-    message: `Successfully updated Item ${req.params.id}`,
+    message: `Successfully updated Item ${req.params.id}, ${oldFoodItem} to ${updatedItem.name}`,
     updatedItem,
   });
 };
@@ -87,7 +88,7 @@ const deleteItem = async (req, res) => {
   await foodItem.remove();
   res.status(200).json({
     success: true,
-    message: `Deleted food item ${req.params.id}`,
+    message: `Deleted food item ${req.params.id}, ${foodItem.name}`,
   });
 };
 module.exports = {

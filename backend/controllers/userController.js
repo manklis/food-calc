@@ -34,7 +34,7 @@ const registerUser = async (req, res) => {
 
   if (user) {
     res.status(201).json({
-      sucess: true,
+      success: true,
       message: "Success in registering user",
       _id: user.id,
       name: user.name,
@@ -42,7 +42,7 @@ const registerUser = async (req, res) => {
       token: generateToken(user._id),
     });
   } else {
-    res.status(400).json({ sucess: false, message: "User data is invalid" });
+    res.status(400).json({ success: false, message: "User data is invalid" });
   }
 };
 
@@ -52,14 +52,16 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    res.status(400).json({ sucess: false, message: "Email or password empty" });
+    res
+      .status(400)
+      .json({ success: false, message: "Email or password empty" });
     return;
   }
   const user = await User.findOne({ email });
 
   if (user && (await bcrypt.compare(password, user.password))) {
     res.json({
-      sucess: true,
+      success: true,
       message: "Success in logging in",
       _id: user.id,
       name: user.name,
@@ -73,6 +75,7 @@ const loginUser = async (req, res) => {
   }
 };
 
+// GET Request
 const getMe = async (req, res) => {
   const { _id, name, email } = await User.findById(req.user.id);
   res.status(200).json({
