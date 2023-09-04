@@ -5,11 +5,11 @@ const User = require("../models/userModel");
 const getItem = async (req, res) => {
   try {
     const foodItems = await FOODITEM.find({ user: req.user.id });
-    res.status(200).json({
-      success: true,
-      message: `Here is ${req.user.name}'s list of food items`,
-      foodItems,
-    });
+    res.status(200).json(foodItems); //{
+    //success: true,
+    //message: `Here is ${req.user.name}'s list of food items`,
+    //foodItems,
+    //});
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: "Something went wrong", error });
@@ -18,6 +18,7 @@ const getItem = async (req, res) => {
 
 // POST Request for /calc
 const setItem = async (req, res) => {
+  console.log(req.body.name);
   if (!req.body.name) {
     res
       .status(400)
@@ -31,11 +32,11 @@ const setItem = async (req, res) => {
     calories: req.body.calories,
     price: req.body.price,
   });
-  res.status(200).json({
-    success: true,
-    message: `Successfully added Item to ${req.user.name}'s food list`,
-    foodItem,
-  });
+  res.status(200).json(foodItem); //{
+  // success: true,
+  // message: `Successfully added Item to ${req.user.name}'s food list`,
+  //foodItem,
+  // });
 };
 
 // PUT Request for /calc/:id
@@ -89,6 +90,7 @@ const deleteItem = async (req, res) => {
   res.status(200).json({
     success: true,
     message: `Deleted food item ${req.params.id}, ${foodItem.name}`,
+    id: req.params.id,
   });
 };
 module.exports = {
